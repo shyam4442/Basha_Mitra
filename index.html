@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>మాటల నేస్తం (Bhasha Mitra) - Telugu to Marathi & Hindi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Telugu', sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .devanagari {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 14px rgba(239, 68, 68, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .mic-recording {
+      animation: pulse-ring 1.5s infinite;
+      background-color: #dc2626 !important;
+    }
+    .wave-bar {
+      display: inline-block;
+      width: 3px;
+      height: 12px;
+      background: #ef4444;
+      margin: 0 1.5px;
+      border-radius: 2px;
+      animation: wave 0.8s infinite ease-in-out;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.15s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.45s; }
+    @keyframes wave {
+      0%, 100% { transform: scaleY(0.4); }
+      50% { transform: scaleY(1.3); }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-r from-indigo-700 via-indigo-600 to-blue-600 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
+      <div>
+        <h1 class="text-lg sm:text-xl font-bold tracking-tight flex items-center gap-2">
+          <span>🗣️</span> మాటల నేస్తం <span class="text-xs font-normal bg-white/20 px-2 py-0.5 rounded-full">Bhasha Mitra</span>
+        </h1>
+        <p class="text-xs text-indigo-100 mt-0.5">తెలుగు → మరాఠీ & హిందీ (తెలుగు లిపిలో ఉచ్చారణతో)</p>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Speed Control -->
+        <button id="speedBtn" type="button" title="ఆడియో వేగం మార్చండి"
+          class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border border-white/25">
+          <span>⚡</span>
+          <span id="speedLabel">1.0x</span>
+        </button>
+
+        <!-- Per-User API Key Settings -->
+        <button id="settingsBtn" type="button" title="మీ వ్యక్తిగత Gemini API కీ సెట్టింగ్"
+          class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border border-white/25">
+          <span>⚙️</span>
+          <span id="apiKeyStatusDot" class="w-2 h-2 rounded-full bg-amber-300"></span>
+          <span class="hidden sm:inline">API కీ</span>
+        </button>
+
+        <!-- Diagnostics Button -->
+        <button id="diagBtn" type="button" title="బటన్లు & పర్మిషన్లు పరీక్షించండి"
+          class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border border-white/25">
+          <span>🔧</span>
+          <span class="hidden sm:inline">టెస్ట్</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-3xl w-full mx-auto px-4 py-5 space-y-5">
+
+    <!-- Input Card -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5">
+      <div class="flex items-center justify-between mb-2">
+        <label for="teluguInput" class="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+          మీరు తెలుగులో ఏం చెప్పాలనుకుంటున్నారు?
+        </label>
+        <span id="micModeBadge" class="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+          వాయిస్ & టెక్స్ట్ సిద్ధం
+        </span>
+      </div>
+
+      <div class="relative">
+        <textarea id="teluguInput" rows="2"
+          placeholder="ఉదాహరణకు: అంధేరీ స్టేషన్‌కు ఎంత అవుతుంది? లేదా మైక్ నొక్కి మాట్లాడండి..."
+          class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 p-3 pr-10 text-base text-slate-800 placeholder-slate-400 resize-none transition"></textarea>
+
+        <button id="clearBtn" type="button" title="క్లియర్ చేయండి"
+          class="hidden absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-700 flex items-center justify-center text-sm font-bold transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Status / Error Bar -->
+      <div id="statusBanner" class="hidden mt-2.5 px-3 py-2 rounded-xl text-xs flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2" id="statusText"></div>
+        <button id="dismissStatusBtn" type="button" class="text-xs underline opacity-75 hover:opacity-100 shrink-0">సరే</button>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2.5">
+          <button id="micBtn" type="button"
+            class="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-semibold px-4 py-2.5 rounded-xl shadow-sm transition">
+            <span id="micIcon" class="text-base">🎤</span>
+            <span id="micBtnLabel" class="text-sm">మాట్లాడండి</span>
+          </button>
+
+          <div id="recordingWave" class="hidden items-center px-2">
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="wave-bar"></span>
+            <span class="text-xs text-rose-600 font-medium ml-1.5">వింటున్నాను...</span>
+          </div>
+        </div>
+
+        <button id="translateBtn" type="button"
+          class="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 disabled:opacity-60 text-white font-semibold px-5 py-2.5 rounded-xl shadow-sm transition">
+          <span id="translateBtnText" class="text-sm">అనువదించు (Translate)</span>
+          <span>➔</span>
+        </button>
+      </div>
+
+      <!-- Quick Scenario Chips -->
+      <div class="mt-4 pt-3 border-t border-slate-100">
+        <p class="text-xs font-medium text-slate-500 mb-2">తక్షణ ఉదాహరణలు (నొక్కి చూడండి):</p>
+        <div id="quickChips" class="flex flex-wrap gap-1.5">
+          <button type="button" data-phrase="ఇక్కడ ఆపండి, ఎంత అయింది?"
+            class="chip-btn text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 transition">
+            🛵 ఇక్కడ ఆపండి, ఎంత అయింది?
+          </button>
+          <button type="button" data-phrase="దీని ధర ఎంత? కొంచెం తగ్గించండి."
+            class="chip-btn text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 transition">
+            🛍️ దీని ధర ఎంత? కొంచెం తగ్గించండి
+          </button>
+          <button type="button" data-phrase="నేను అంధేరీ స్టేషన్‌కు వెళ్ళాలి."
+            class="chip-btn text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 transition">
+            🚉 అంధేరీ స్టేషన్‌కు వెళ్ళాలి
+          </button>
+          <button type="button" data-phrase="నాకు మరాఠీ కొంచెం కొంచెం వచ్చు."
+            class="chip-btn text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 transition">
+            😊 నాకు మరాఠీ కొంచెం వచ్చు
+          </button>
+          <button type="button" data-phrase="ఈ బిల్లులో ట్యాక్స్ ఎంత వేశారు?"
+            class="chip-btn text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-700 px-2.5 py-1.5 rounded-lg border border-slate-200 transition">
+            🧾 ఈ బిల్లులో ట్యాక్స్ ఎంత?
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Translation Results -->
+    <section id="resultsSection" class="space-y-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Marathi Card -->
+        <div class="bg-white rounded-2xl shadow-sm border-2 border-orange-200 p-4 sm:p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-700 bg-orange-100 px-2.5 py-1 rounded-full">
+                🟠 మరాఠీ (Marathi)
+              </span>
+              <button id="copyMarathiBtn" type="button"
+                class="text-xs font-medium text-slate-600 hover:text-orange-700 bg-slate-100 hover:bg-orange-50 px-2.5 py-1 rounded-lg transition">
+                📋 కాపీ
+              </button>
+            </div>
+
+            <!-- Telugu Transliteration (Primary) -->
+            <div class="bg-orange-50/70 rounded-xl p-3.5 border border-orange-100 mb-2.5">
+              <p class="text-[11px] font-semibold text-orange-600 mb-1">తెలుగులో చదవండి (ఉచ్చారణ):</p>
+              <p id="marathiTeluguScript" class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                ఇథే థాంబా, కితీ ఝాలే?
+              </p>
+            </div>
+
+            <!-- Native Devanagari + Roman -->
+            <div class="px-1 space-y-0.5">
+              <p id="marathiNative" class="devanagari text-sm text-slate-600 font-medium">इथे थांबा, किती झाले?</p>
+              <p id="marathiRoman" class="text-xs text-slate-400 italic">Ithe thaamba, kiti jhale?</p>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100">
+            <button id="listenMarathiBtn" type="button"
+              class="w-full flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 active:scale-98 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm transition">
+              <span>🔊</span>
+              <span id="listenMarathiLabel" class="text-sm">మరాఠీలో వినండి (Listen)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Hindi Card -->
+        <div class="bg-white rounded-2xl shadow-sm border-2 border-emerald-200 p-4 sm:p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                🟢 హిందీ (Hindi)
+              </span>
+              <button id="copyHindiBtn" type="button"
+                class="text-xs font-medium text-slate-600 hover:text-emerald-700 bg-slate-100 hover:bg-emerald-50 px-2.5 py-1 rounded-lg transition">
+                📋 కాపీ
+              </button>
+            </div>
+
+            <!-- Telugu Transliteration (Primary) -->
+            <div class="bg-emerald-50/70 rounded-xl p-3.5 border border-emerald-100 mb-2.5">
+              <p class="text-[11px] font-semibold text-emerald-600 mb-1">తెలుగులో చదవండి (ఉచ్చారణ):</p>
+              <p id="hindiTeluguScript" class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
+                యహాఁ రోకియే, కిత్నా హుఆ?
+              </p>
+            </div>
+
+            <!-- Native Devanagari + Roman -->
+            <div class="px-1 space-y-0.5">
+              <p id="hindiNative" class="devanagari text-sm text-slate-600 font-medium">यहाँ रोकिए, कितना हुआ?</p>
+              <p id="hindiRoman" class="text-xs text-slate-400 italic">Yahaan rokiye, kitna hua?</p>
+            </div>
+          </div>
+
+          <div class="mt-4 pt-3 border-t border-slate-100">
+            <button id="listenHindiBtn" type="button"
+              class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-semibold py-2.5 px-4 rounded-xl shadow-sm transition">
+              <span>🔊</span>
+              <span id="listenHindiLabel" class="text-sm">హిందీలో వినండి (Listen)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cultural & Grammar Tip -->
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+        <span class="text-xl">💡</span>
+        <div>
+          <h3 class="text-xs font-bold uppercase tracking-wide text-amber-800">సందర్భ చిట్కా (Usage Tip)</h3>
+          <p id="usageTipText" class="text-sm text-amber-950 mt-1 leading-relaxed">
+            ఆటో లేదా బైక్ ట్యాక్సీ దిగేటప్పుడు మర్యాదగా <strong>"ఇథే థాంబా"</strong> (ఇక్కడ ఆపండి) అని చెప్పి, డబ్బులు అడగడానికి <strong>"కితీ ఝాలే?"</strong> (ఎంత అయింది?) అనండి.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Saved Phrasebook / History (Private per User Browser) -->
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5">
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <span>📚</span> మీ వ్యక్తిగత ఫ్రేజ్‌బుక్ (Your Saved History)
+        </h2>
+        <button id="clearHistoryBtn" type="button"
+          class="text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2.5 py-1 rounded-lg font-medium transition">
+          🗑️ అన్నీ క్లియర్ చేయి
+        </button>
+      </div>
+      <p class="text-[11px] text-slate-400 mb-3">ఈ చరిత్ర మీ ఫోన్/బ్రౌజర్‌లో మాత్రమే సురక్షితంగా సేవ్ అవుతుంది (ఇతరులకు కనిపించదు).</p>
+
+      <div id="phrasebookList" class="space-y-2.5">
+        <!-- Populated dynamically -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Per-User API Key Settings Modal -->
+  <div id="settingsModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <span>⚙️</span> మీ వ్యక్తిగత Gemini API కీ
+        </h3>
+        <button id="closeSettingsBtn" type="button" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+      </div>
+
+      <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
+        <p>ప్రతి వినియోగదారుడు తమ సొంత ఉచిత <strong>Google AI Studio (Gemini) API Key</strong> ని ఇక్కడ సేవ్ చేసుకోవచ్చు. ఇది మీ పరికరంలో మాత్రమే నిల్వ ఉంటుంది—ఎవరితోనూ షేర్ అవ్వదు.</p>
+        <p class="text-slate-500">కీ లేకపోయినా పైన ఉన్న ఉదాహరణ వాక్యాలు మరియు బ్రౌజర్ వాయిస్/ఆడియో పనిచేస్తాయి.</p>
+      </div>
+
+      <div>
+        <label for="apiKeyInput" class="block text-xs font-semibold text-slate-700 mb-1">Gemini API Key:</label>
+        <input id="apiKeyInput" type="password" placeholder="AIzaSy..."
+          class="w-full rounded-xl border border-slate-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 px-3 py-2.5 text-sm font-mono" />
+      </div>
+
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <button id="removeApiKeyBtn" type="button"
+          class="text-xs text-rose-600 hover:bg-rose-50 font-semibold py-2.5 px-3 rounded-xl transition">
+          కీ తొలగించు
+        </button>
+        <div class="flex gap-2">
+          <button id="cancelSettingsBtn" type="button"
+            class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 px-4 rounded-xl transition">
+            రద్దు
+          </button>
+          <button id="saveApiKeyBtn" type="button"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2.5 px-4 rounded-xl transition">
+            సేవ్ చేయి
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diagnostics Modal -->
+  <div id="diagModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <span>🔧</span> సిస్టమ్ & బటన్ల తనిఖీ (Diagnostics)
+        </h3>
+        <button id="closeDiagBtn" type="button" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 font-bold">✕</button>
+      </div>
+
+      <div id="diagResults" class="space-y-2.5 text-sm">
+        <div class="p-2.5 rounded-xl bg-slate-50 flex items-center justify-between">
+          <span>1. సెక్యూర్ కనెక్షన్ (HTTPS)</span>
+          <span id="diagHttpsStatus" class="font-semibold text-slate-600">తనిఖీ చేస్తోంది...</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-50 flex items-center justify-between">
+          <span>2. మైక్రోఫోన్ API (Mic Support)</span>
+          <span id="diagMicStatus" class="font-semibold text-slate-600">తనిఖీ చేస్తోంది...</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-50 flex items-center justify-between">
+          <span>3. ఆడియో అవుట్‌పుట్ (Audio Unlock)</span>
+          <span id="diagAudioStatus" class="font-semibold text-slate-600">తనిఖీ చేస్తోంది...</span>
+        </div>
+        <div class="p-2.5 rounded-xl bg-slate-50 flex items-center justify-between">
+          <span>4. వ్యక్తిగత స్టోరేజ్ (Local Storage)</span>
+          <span id="diagStorageStatus" class="font-semibold text-slate-600">తనిఖీ చేస్తోంది...</span>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button id="testBeepBtn" type="button"
+          class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-2.5 px-3 rounded-xl transition">
+          🔊 టెస్ట్ ఆడియో ప్లే చేయి
+        </button>
+        <button id="closeDiagFooterBtn" type="button"
+          class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 px-4 rounded-xl transition">
+          మూసివేయి
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. CONFIGURATION & PER-USER LOCAL STATE
+    // =========================================================================
+    const TEXT_MODEL = "gemini-2.5-flash";
+    const TTS_MODEL = "gemini-2.5-flash-preview-tts";
+    const STORAGE_KEY = "bhasha_mitra_phrasebook_v1";
+    const API_KEY_STORAGE = "bhasha_mitra_user_api_key_v1";
+
+    function getUserApiKey() {
+      try {
+        return (localStorage.getItem(API_KEY_STORAGE) || "").trim();
+      } catch (e) {
+        return "";
+      }
+    }
+
+    const state = {
+      playbackRate: 1.0,
+      isRecording: false,
+      isTranslating: false,
+      currentAudio: null,
+      activeAudioBtnId: null,
+      audioCtx: null,
+      audioCache: new Map(),
+      recognition: null,
+      mediaRecorder: null,
+      audioChunks: [],
+      currentTranslation: {
+        telugu: "ఇక్కడ ఆపండి, ఎంత అయింది?",
+        marathiTelugu: "ఇథే థాంబా, కితీ ఝాలే?",
+        marathiNative: "इथे थांबा, किती झाले?",
+        marathiRoman: "Ithe thaamba, kiti jhale?",
+        hindiTelugu: "యహాఁ రోకియే, కిత్నా హుఆ?",
+        hindiNative: "यहाँ रोकिए, कितना हुआ?",
+        hindiRoman: "Yahaan rokiye, kitna hua?",
+        tip: "ఆటో లేదా బైక్ ట్యాక్సీ దిగేటప్పుడు మర్యాదగా 'ఇథే థాంబా' (ఇక్కడ ఆపండి) అని చెప్పి, డబ్బులు అడగడానికి 'కితీ ఝాలే?' (ఎంత అయింది?) అనండి."
+      },
+      phrasebook: []
+    };
+
+    const OFFLINE_DICTIONARY = {
+      "ఇక్కడ ఆపండి, ఎంత అయింది?": {
+        marathiTelugu: "ఇథే థాంబా, కితీ ఝాలే?",
+        marathiNative: "इथे थांबा, किती झाले?",
+        marathiRoman: "Ithe thaamba, kiti jhale?",
+        hindiTelugu: "యహాఁ రోకియే, కిత్నా హుఆ?",
+        hindiNative: "यहाँ रोकिए, कितना हुआ?",
+        hindiRoman: "Yahaan rokiye, kitna hua?",
+        tip: "ప్రయాణంలో ఆటో లేదా బైక్ ఆపడానికి 'ఇథే థాంబా' (మరాఠీ) లేదా 'యహాఁ రోకియే' (హిందీ) వాడండి."
+      },
+      "దీని ధర ఎంత? కొంచెం తగ్గించండి.": {
+        marathiTelugu: "యాచీ కిమ్మత్ కితీ ఆహే? థోడం కమీ కరా.",
+        marathiNative: "याची किंमत किती आहे? थोडं कमी करा.",
+        marathiRoman: "Yachi kimmat kiti aahe? Thoda kami kara.",
+        hindiTelugu: "ఇస్కీ కీమత్ కిత్నీ హై? థోడా కమ్ కీజియే.",
+        hindiNative: "इसकी कीमत कितनी है? थोड़ा कम कीजिए।",
+        hindiRoman: "Iski keemat kitni hai? Thoda kam kijiye.",
+        tip: "షాపింగ్ లేదా గార్మెంట్ మార్కెట్లలో బేరం ఆడేటప్పుడు 'థోడం కమీ కరా' చాలా సహజంగా వినిపిస్తుంది."
+      },
+      "నేను అంధేరీ స్టేషన్‌కు వెళ్ళాలి.": {
+        marathiTelugu: "మలా అంధేరీ స్టేషన్‌లా జాయచం ఆహే.",
+        marathiNative: "मला अंधेरी स्टेशनला जायचं आहे.",
+        marathiRoman: "Mala Andheri station-la jaycha aahe.",
+        hindiTelugu: "ముఝే అంధేరీ స్టేషన్ జానా హై.",
+        hindiNative: "मुझे अंधेरी स्टेशन जाना है।",
+        hindiRoman: "Mujhe Andheri station jaana hai.",
+        tip: "తెలుగులో 'నాకు వెళ్ళాలి' అన్నట్లుగానే మరాఠీలో 'మలా ... జాయచం ఆహే' అని వాడతారు."
+      },
+      "నాకు మరాఠీ కొంచెం కొంచెం వచ్చు.": {
+        marathiTelugu: "మలా మరాఠీ థోడం థోడం యేతం.",
+        marathiNative: "मला मराठी थोडं थोडं येतं.",
+        marathiRoman: "Mala Marathi thoda thoda yeta.",
+        hindiTelugu: "ముఝే మరాఠీ థోడీ థోడీ ఆతీ హై.",
+        hindiNative: "मुझे मराठी थोड़ी थोड़ी आती है।",
+        hindiRoman: "Mujhe Marathi thodi thodi aati hai.",
+        tip: "ఇలా చెబితే ఎదుటివారు నెమ్మదిగా, అర్థమయ్యేలా మాట్లాడతారు."
+      },
+      "ఈ బిల్లులో ట్యాక్స్ ఎంత వేశారు?": {
+        marathiTelugu: "యా బిలామధ్యే ట్యాక్స్ కితీ లావ్లా ఆహే?",
+        marathiNative: "या बिलामध्ये टॅक्स किती लावला आहे?",
+        marathiRoman: "Ya bilamadhye tax kiti lavla aahe?",
+        hindiTelugu: "ఇస్ బిల్ మేం ట్యాక్స్ కిత్నా లగాయా హై?",
+        hindiNative: "इस बिल में टैक्स कितना लगाया है?",
+        hindiRoman: "Is bill mein tax kitna lagaya hai?",
+        tip: "హోటల్ లేదా షాపులో బిల్లు వివరాలు అడగడానికి ఈ వాక్యం ఉపయోగపడుతుంది."
+      }
+    };
+
+    // =========================================================================
+    // 2. DOM ELEMENTS
+    // =========================================================================
+    const el = {
+      teluguInput: document.getElementById("teluguInput"),
+      clearBtn: document.getElementById("clearBtn"),
+      micBtn: document.getElementById("micBtn"),
+      micIcon: document.getElementById("micIcon"),
+      micBtnLabel: document.getElementById("micBtnLabel"),
+      micModeBadge: document.getElementById("micModeBadge"),
+      recordingWave: document.getElementById("recordingWave"),
+      translateBtn: document.getElementById("translateBtn"),
+      translateBtnText: document.getElementById("translateBtnText"),
+      speedBtn: document.getElementById("speedBtn"),
+      speedLabel: document.getElementById("speedLabel"),
+      statusBanner: document.getElementById("statusBanner"),
+      statusText: document.getElementById("statusText"),
+      dismissStatusBtn: document.getElementById("dismissStatusBtn"),
+      marathiTeluguScript: document.getElementById("marathiTeluguScript"),
+      marathiNative: document.getElementById("marathiNative"),
+      marathiRoman: document.getElementById("marathiRoman"),
+      hindiTeluguScript: document.getElementById("hindiTeluguScript"),
+      hindiNative: document.getElementById("hindiNative"),
+      hindiRoman: document.getElementById("hindiRoman"),
+      usageTipText: document.getElementById("usageTipText"),
+      listenMarathiBtn: document.getElementById("listenMarathiBtn"),
+      listenMarathiLabel: document.getElementById("listenMarathiLabel"),
+      listenHindiBtn: document.getElementById("listenHindiBtn"),
+      listenHindiLabel: document.getElementById("listenHindiLabel"),
+      copyMarathiBtn: document.getElementById("copyMarathiBtn"),
+      copyHindiBtn: document.getElementById("copyHindiBtn"),
+      phrasebookList: document.getElementById("phrasebookList"),
+      clearHistoryBtn: document.getElementById("clearHistoryBtn"),
+      settingsBtn: document.getElementById("settingsBtn"),
+      apiKeyStatusDot: document.getElementById("apiKeyStatusDot"),
+      settingsModal: document.getElementById("settingsModal"),
+      apiKeyInput: document.getElementById("apiKeyInput"),
+      saveApiKeyBtn: document.getElementById("saveApiKeyBtn"),
+      removeApiKeyBtn: document.getElementById("removeApiKeyBtn"),
+      closeSettingsBtn: document.getElementById("closeSettingsBtn"),
+      cancelSettingsBtn: document.getElementById("cancelSettingsBtn"),
+      diagBtn: document.getElementById("diagBtn"),
+      diagModal: document.getElementById("diagModal"),
+      closeDiagBtn: document.getElementById("closeDiagBtn"),
+      closeDiagFooterBtn: document.getElementById("closeDiagFooterBtn"),
+      testBeepBtn: document.getElementById("testBeepBtn")
+    };
+
+    function updateApiKeyIndicator() {
+      const hasKey = Boolean(getUserApiKey());
+      el.apiKeyStatusDot.className = hasKey
+        ? "w-2 h-2 rounded-full bg-emerald-400"
+        : "w-2 h-2 rounded-full bg-amber-300";
+    }
+
+    // =========================================================================
+    // 3. HELPER UTILITIES
+    // =========================================================================
+    function showStatus(message, type = "info") {
+      const styles = {
+        info: "bg-indigo-50 text-indigo-800 border border-indigo-200",
+        success: "bg-emerald-50 text-emerald-800 border border-emerald-200",
+        warning: "bg-amber-50 text-amber-800 border border-amber-200",
+        error: "bg-rose-50 text-rose-800 border border-rose-200"
+      };
+      el.statusBanner.className = `mt-2.5 px-3 py-2 rounded-xl text-xs flex items-center justify-between gap-2 ${styles[type] || styles.info}`;
+      el.statusText.textContent = message;
+      el.statusBanner.classList.remove("hidden");
+    }
+
+    function hideStatus() {
+      el.statusBanner.classList.add("hidden");
+    }
+
+    function unlockAudioContext() {
+      try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return false;
+        if (!state.audioCtx) state.audioCtx = new AudioContextClass();
+        if (state.audioCtx.state === "suspended") state.audioCtx.resume();
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function copyToClipboard(text, buttonEl) {
+      let copied = false;
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+          copied = true;
+        }
+      } catch (err) {
+        copied = false;
+      }
+
+      if (!copied) {
+        try {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.select();
+          copied = document.execCommand("copy");
+          document.body.removeChild(ta);
+        } catch (err) {
+          copied = false;
+        }
+      }
+
+      if (copied && buttonEl) {
+        const orig = buttonEl.innerHTML;
+        buttonEl.innerHTML = "✓ కాపీ అయింది";
+        buttonEl.classList.add("bg-emerald-100", "text-emerald-800");
+        setTimeout(() => {
+          buttonEl.innerHTML = orig;
+          buttonEl.classList.remove("bg-emerald-100", "text-emerald-800");
+        }, 1800);
+      } else {
+        showStatus("కాపీ చేయడం సాధ్యం కాలేదు. టెక్స్ట్ సెలెక్ట్ చేసి కాపీ చేయండి.", "warning");
+      }
+    }
+
+    function pcmBase64ToWavUrl(base64Pcm, sampleRate = 24000) {
+      const binaryString = atob(base64Pcm);
+      const len = binaryString.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) bytes[i] = binaryString.charCodeAt(i);
+
+      const wavHeader = new ArrayBuffer(44);
+      const view = new DataView(wavHeader);
+      const writeString = (offset, str) => {
+        for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+      };
+
+      writeString(0, "RIFF");
+      view.setUint32(4, 36 + bytes.length, true);
+      writeString(8, "WAVE");
+      writeString(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true);
+      view.setUint16(22, 1, true);
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeString(36, "data");
+      view.setUint32(40, bytes.length, true);
+
+      const blob = new Blob([wavHeader, bytes], { type: "audio/wav" });
+      return URL.createObjectURL(blob);
+    }
+
+    // =========================================================================
+    // 4. TRANSLATION ENGINE
+    // =========================================================================
+    async function translateTeluguPhrase(inputText) {
+      const cleanText = (inputText || "").trim();
+      if (!cleanText) {
+        showStatus("దయచేసి ముందుగా తెలుగులో టైప్ చేయండి లేదా మైక్ నొక్కి మాట్లాడండి.", "warning");
+        el.teluguInput.focus();
+        return;
+      }
+
+      if (state.isTranslating) return;
+      state.isTranslating = true;
+      el.translateBtn.disabled = true;
+      el.translateBtnText.textContent = "అనువదిస్తోంది...";
+      hideStatus();
+
+      const userKey = getUserApiKey();
+
+      try {
+        if (!userKey) {
+          const matchedKey = Object.keys(OFFLINE_DICTIONARY).find(
+            k => k.replace(/[?.!]/g, "").trim() === cleanText.replace(/[?.!]/g, "").trim()
+          );
+          if (matchedKey) {
+            applyTranslationResult(cleanText, OFFLINE_DICTIONARY[matchedKey]);
+            return;
+          }
+          throw new Error("NO_API_KEY");
+        }
+
+        const prompt = `You are a helpful Telugu-to-Marathi and Hindi language tutor for a Telugu speaker in Mumbai.
+Translate the following Telugu phrase into natural, conversational Marathi and Hindi.
+CRITICAL: Provide accurate transliteration of both the Marathi and Hindi translations written in **Telugu script** so a Telugu reader can pronounce them accurately.
+
+Telugu Input: "${cleanText}"
+
+Return ONLY valid JSON with this exact schema:
+{
+  "marathiTelugu": "Marathi translation written in Telugu script",
+  "marathiNative": "Marathi translation in Devanagari script",
+  "marathiRoman": "Marathi phonetic English spelling",
+  "hindiTelugu": "Hindi translation written in Telugu script",
+  "hindiNative": "Hindi translation in Devanagari script",
+  "hindiRoman": "Hindi phonetic English spelling",
+  "tip": "Short, practical usage or politeness tip in Telugu (1-2 sentences)"
+}`;
+
+        const response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${encodeURIComponent(userKey)}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: prompt }] }],
+              generationConfig: {
+                responseMimeType: "application/json",
+                temperature: 0.2
+              }
+            })
+          }
+        );
+
+        if (!response.ok) throw new Error(`API_ERROR_${response.status}`);
+
+        const data = await response.json();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!rawText) throw new Error("EMPTY_RESPONSE");
+
+        const parsed = JSON.parse(rawText);
+        applyTranslationResult(cleanText, parsed);
+
+      } catch (err) {
+        const matchedKey = Object.keys(OFFLINE_DICTIONARY).find(
+          k => k.replace(/[?.!]/g, "").trim() === cleanText.replace(/[?.!]/g, "").trim()
+        );
+        if (matchedKey) {
+          applyTranslationResult(cleanText, OFFLINE_DICTIONARY[matchedKey]);
+        } else if (err.message === "NO_API_KEY") {
+          showStatus("కొత్త వాక్యాల అనువాదం కోసం పైన ఉన్న '⚙️ API కీ' నొక్కి మీ ఉచిత Gemini API Key ని సేవ్ చేయండి.", "warning");
+        } else {
+          showStatus("అనువాదంలో అంతరాయం ఏర్పడింది. మీ API Key సరిగ్గా ఉందో లేదో తనిఖీ చేయండి.", "error");
+        }
+      } finally {
+        state.isTranslating = false;
+        el.translateBtn.disabled = false;
+        el.translateBtnText.textContent = "అనువదించు (Translate)";
+      }
+    }
+
+    function applyTranslationResult(teluguText, result) {
+      state.currentTranslation = {
+        telugu: teluguText,
+        marathiTelugu: result.marathiTelugu || "",
+        marathiNative: result.marathiNative || "",
+        marathiRoman: result.marathiRoman || "",
+        hindiTelugu: result.hindiTelugu || "",
+        hindiNative: result.hindiNative || "",
+        hindiRoman: result.hindiRoman || "",
+        tip: result.tip || "స్పష్టంగా, మర్యాదగా మాట్లాడండి."
+      };
+
+      el.marathiTeluguScript.textContent = state.currentTranslation.marathiTelugu;
+      el.marathiNative.textContent = state.currentTranslation.marathiNative;
+      el.marathiRoman.textContent = state.currentTranslation.marathiRoman;
+
+      el.hindiTeluguScript.textContent = state.currentTranslation.hindiTelugu;
+      el.hindiNative.textContent = state.currentTranslation.hindiNative;
+      el.hindiRoman.textContent = state.currentTranslation.hindiRoman;
+
+      el.usageTipText.textContent = state.currentTranslation.tip;
+
+      saveToPhrasebook(state.currentTranslation);
+    }
+
+    // =========================================================================
+    // 5. DUAL-ENGINE VOICE INPUT
+    // =========================================================================
+    function stopRecordingUI() {
+      state.isRecording = false;
+      el.micBtn.classList.remove("mic-recording");
+      el.micIcon.textContent = "🎤";
+      el.micBtnLabel.textContent = "మాట్లాడండి";
+      el.recordingWave.classList.add("hidden");
+      el.recordingWave.classList.remove("flex");
+    }
+
+    function startRecordingUI(modeText) {
+      state.isRecording = true;
+      el.micBtn.classList.add("mic-recording");
+      el.micIcon.textContent = "⏹️";
+      el.micBtnLabel.textContent = "ఆపండి";
+      el.recordingWave.classList.remove("hidden");
+      el.recordingWave.classList.add("flex");
+      if (modeText) el.micModeBadge.textContent = modeText;
+    }
+
+    async function toggleVoiceInput() {
+      unlockAudioContext();
+      hideStatus();
+
+      if (state.isRecording) {
+        if (state.recognition) {
+          try { state.recognition.stop(); } catch (e) {}
+        }
+        if (state.mediaRecorder && state.mediaRecorder.state !== "inactive") {
+          try { state.mediaRecorder.stop(); } catch (e) {}
+        }
+        stopRecordingUI();
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (SpeechRecognition) {
+        try {
+          const recognition = new SpeechRecognition();
+          state.recognition = recognition;
+          recognition.lang = "te-IN";
+          recognition.interimResults = true;
+          recognition.maxAlternatives = 1;
+
+          let finalTranscript = "";
+
+          recognition.onstart = () => startRecordingUI("లైవ్ వాయిస్ (te-IN)");
+
+          recognition.onresult = (event) => {
+            let interim = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              const transcript = event.results[i][0].transcript;
+              if (event.results[i].isFinal) finalTranscript += transcript;
+              else interim += transcript;
+            }
+            el.teluguInput.value = (finalTranscript || interim).trim();
+            updateClearButtonVisibility();
+          };
+
+          recognition.onerror = async (event) => {
+            stopRecordingUI();
+            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+              showStatus("మైక్రోఫోన్ అనుమతి నిరాకరించబడింది. అడ్రస్ బార్ పక్కన ఉన్న 🔒 ఐకాన్ నొక్కి Microphone Allow చేయండి.", "error");
+            } else {
+              await startMediaRecorderFallback();
+            }
+          };
+
+          recognition.onend = () => {
+            stopRecordingUI();
+            if (el.teluguInput.value.trim()) {
+              translateTeluguPhrase(el.teluguInput.value.trim());
+            }
+          };
+
+          recognition.start();
+          return;
+        } catch (err) {}
+      }
+
+      await startMediaRecorderFallback();
+    }
+
+    async function startMediaRecorderFallback() {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        showStatus("ఈ బ్రౌజర్‌లో మైక్రోఫోన్ సపోర్ట్ లేదు. దయచేసి టైప్ చేయండి.", "error");
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+        state.mediaRecorder = mediaRecorder;
+        state.audioChunks = [];
+
+        mediaRecorder.ondataavailable = (e) => {
+          if (e.data.size > 0) state.audioChunks.push(e.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          stream.getTracks().forEach(t => t.stop());
+          stopRecordingUI();
+
+          const audioBlob = new Blob(state.audioChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+          if (audioBlob.size < 500) return;
+
+          const userKey = getUserApiKey();
+          if (!userKey) {
+            showStatus("ఆడియోను టెక్స్ట్‌గా మార్చడానికి పైన '⚙️ API కీ' నొక్కి మీ Gemini API Key ని జతచేయండి.", "warning");
+            return;
+          }
+
+          showStatus("మీ మాటలను తెలుగు టెక్స్ట్‌గా మారుస్తోంది...", "info");
+          try {
+            const base64Audio = await blobToBase64(audioBlob);
+            const res = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${encodeURIComponent(userKey)}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  contents: [{
+                    parts: [
+                      { text: "Transcribe this spoken Telugu audio accurately into Telugu script only. Return just the transcribed Telugu text." },
+                      { inlineData: { mimeType: audioBlob.type || "audio/webm", data: base64Audio } }
+                    ]
+                  }]
+                })
+              }
+            );
+            const data = await res.json();
+            const transcribed = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+            if (transcribed) {
+              el.teluguInput.value = transcribed;
+              updateClearButtonVisibility();
+              hideStatus();
+              translateTeluguPhrase(transcribed);
+            } else {
+              showStatus("మాటలు స్పష్టంగా వినిపించలేదు. మళ్ళీ ప్రయత్నించండి.", "warning");
+            }
+          } catch (err) {
+            showStatus("ఆడియో ప్రాసెసింగ్ విఫలమైంది. దయచేసి టైప్ చేయండి.", "error");
+          }
+        };
+
+        mediaRecorder.start();
+        startRecordingUI("ఆడియో రికార్డింగ్ మోడ్");
+      } catch (err) {
+        stopRecordingUI();
+        showStatus("మైక్రోఫోన్ యాక్సెస్ అనుమతించబడలేదు. బ్రౌజర్ సెట్టింగ్స్‌లో మైక్ పర్మిషన్ ఆన్ చేయండి.", "error");
+      }
+    }
+
+    function blobToBase64(blob) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    // =========================================================================
+    // 6. AUDIO PLAYBACK ENGINE
+    // =========================================================================
+    function stopCurrentAudio() {
+      if (state.currentAudio) {
+        state.currentAudio.pause();
+        state.currentAudio.currentTime = 0;
+        state.currentAudio = null;
+      }
+      if ("speechSynthesis" in window) {
+        try { window.speechSynthesis.cancel(); } catch (e) {}
+      }
+      resetAllListenLabels();
+    }
+
+    function resetAllListenLabels() {
+      el.listenMarathiLabel.textContent = "మరాఠీలో వినండి (Listen)";
+      el.listenHindiLabel.textContent = "హిందీలో వినండి (Listen)";
+      state.activeAudioBtnId = null;
+    }
+
+    async function speakPhrase(text, langCode, btnId, labelEl) {
+      unlockAudioContext();
+
+      if (state.activeAudioBtnId === btnId) {
+        stopCurrentAudio();
+        return;
+      }
+
+      stopCurrentAudio();
+      state.activeAudioBtnId = btnId;
+      if (labelEl) labelEl.textContent = "లోడ్ అవుతోంది...";
+
+      const cacheKey = `${langCode}:${text}`;
+      const userKey = getUserApiKey();
+
+      try {
+        let audioUrl = state.audioCache.get(cacheKey);
+
+        if (!audioUrl && userKey) {
+          const langName = langCode === "mr-IN" ? "Marathi" : "Hindi";
+          const ttsPrompt = `Speak the following ${langName} sentence clearly and naturally at a comfortable conversational pace: "${text}"`;
+
+          const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${TTS_MODEL}:generateContent?key=${encodeURIComponent(userKey)}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ parts: [{ text: ttsPrompt }] }],
+                generationConfig: {
+                  responseModalities: ["AUDIO"],
+                  speechConfig: {
+                    voiceConfig: {
+                      prebuiltVoiceConfig: {
+                        voiceName: langCode === "mr-IN" ? "Aoede" : "Kore"
+                      }
+                    }
+                  }
+                }
+              })
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            const inlineData = data?.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+            if (inlineData?.data) {
+              audioUrl = pcmBase64ToWavUrl(inlineData.data, 24000);
+              state.audioCache.set(cacheKey, audioUrl);
+            }
+          }
+        }
+
+        if (audioUrl) {
+          const audio = new Audio(audioUrl);
+          audio.playbackRate = state.playbackRate;
+          state.currentAudio = audio;
+
+          if (labelEl) labelEl.textContent = "వినబడుతోంది... (ఆపడానికి నొక్కండి)";
+
+          audio.onended = () => {
+            state.currentAudio = null;
+            resetAllListenLabels();
+          };
+          audio.onerror = () => {
+            state.currentAudio = null;
+            fallbackBrowserTTS(text, langCode, labelEl);
+          };
+
+          await audio.play();
+          return;
+        }
+
+        fallbackBrowserTTS(text, langCode, labelEl);
+
+      } catch (err) {
+        fallbackBrowserTTS(text, langCode, labelEl);
+      }
+    }
+
+    function fallbackBrowserTTS(text, langCode, labelEl) {
+      if (!("speechSynthesis" in window)) {
+        resetAllListenLabels();
+        showStatus("ఆడియో ప్లేబ్యాక్ కోసం '⚙️ API కీ' నొక్కి మీ Gemini API Key ని జతచేయండి.", "warning");
+        return;
+      }
+
+      try {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = langCode;
+        utterance.rate = state.playbackRate;
+
+        const voices = window.speechSynthesis.getVoices();
+        const matchedVoice =
+          voices.find(v => v.lang.toLowerCase() === langCode.toLowerCase()) ||
+          voices.find(v => v.lang.toLowerCase().startsWith("hi")) ||
+          voices.find(v => v.lang.toLowerCase().includes("in"));
+
+        if (matchedVoice) utterance.voice = matchedVoice;
+        if (labelEl) labelEl.textContent = "వినబడుతోంది... (ఆపడానికి నొక్కండి)";
+
+        utterance.onend = () => resetAllListenLabels();
+        utterance.onerror = () => {
+          resetAllListenLabels();
+          showStatus("ఈ పరికరంలో స్థానిక వాయిస్ ప్యాక్ లేదు. పూర్తి ఆడియో కోసం '⚙️ API కీ' వాడండి.", "warning");
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } catch (e) {
+        resetAllListenLabels();
+        showStatus("ఆడియో ప్లే చేయడం సాధ్యం కాలేదు.", "error");
+      }
+    }
+
+    // =========================================================================
+    // 7. PRIVATE PER-USER PHRASEBOOK (LOCALSTORAGE)
+    // =========================================================================
+    function loadPhrasebook() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          state.phrasebook = JSON.parse(saved);
+        } else {
+          state.phrasebook = [state.currentTranslation];
+        }
+      } catch (e) {
+        state.phrasebook = [state.currentTranslation];
+      }
+      renderPhrasebook();
+    }
+
+    function saveToPhrasebook(entry) {
+      state.phrasebook = state.phrasebook.filter(item => item.telugu !== entry.telugu);
+      state.phrasebook.unshift(entry);
+      if (state.phrasebook.length > 30) state.phrasebook.pop();
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state.phrasebook));
+      } catch (e) {}
+      renderPhrasebook();
+    }
+
+    function renderPhrasebook() {
+      if (!state.phrasebook.length) {
+        el.phrasebookList.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">ఇంకా ఏ వాక్యాలు సేవ్ కాలేదు. పైన ఏదైనా వాక్యం అనువదించండి!</p>`;
+        return;
+      }
+
+      el.phrasebookList.innerHTML = state.phrasebook.map((item, idx) => `
+        <div class="p-3 rounded-xl border border-slate-200 hover:border-indigo-200 bg-slate-50/60 transition flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+          <div class="space-y-1 cursor-pointer flex-1" data-load-idx="${idx}">
+            <p class="text-xs font-semibold text-slate-500">${escapeHtml(item.telugu)}</p>
+            <p class="text-sm font-bold text-orange-800">🟠 ${escapeHtml(item.marathiTelugu)}</p>
+            <p class="text-sm font-bold text-emerald-800">🟢 ${escapeHtml(item.hindiTelugu)}</p>
+          </div>
+          <div class="flex items-center gap-1.5 self-end sm:self-center">
+            <button type="button" data-play-mr="${idx}" title="మరాఠీ వినండి"
+              class="px-2.5 py-1.5 rounded-lg bg-orange-100 hover:bg-orange-200 text-orange-800 text-xs font-semibold transition">
+              🔊 మరాఠీ
+            </button>
+            <button type="button" data-play-hi="${idx}" title="హిందీ వినండి"
+              class="px-2.5 py-1.5 rounded-lg bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-semibold transition">
+              🔊 హిందీ
+            </button>
+            <button type="button" data-del-idx="${idx}" title="తొలగించు"
+              class="px-2 py-1.5 rounded-lg hover:bg-rose-100 text-slate-400 hover:text-rose-600 text-xs transition">
+              ✕
+            </button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // =========================================================================
+    // 8. EVENT LISTENERS & MODALS
+    // =========================================================================
+    function updateClearButtonVisibility() {
+      if (el.teluguInput.value.trim().length > 0) el.clearBtn.classList.remove("hidden");
+      else el.clearBtn.classList.add("hidden");
+    }
+
+    el.teluguInput.addEventListener("input", updateClearButtonVisibility);
+
+    el.teluguInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        translateTeluguPhrase(el.teluguInput.value);
+      }
+    });
+
+    el.clearBtn.addEventListener("click", () => {
+      el.teluguInput.value = "";
+      updateClearButtonVisibility();
+      hideStatus();
+      el.teluguInput.focus();
+    });
+
+    el.dismissStatusBtn.addEventListener("click", hideStatus);
+    el.micBtn.addEventListener("click", toggleVoiceInput);
+    el.translateBtn.addEventListener("click", () => translateTeluguPhrase(el.teluguInput.value));
+
+    el.speedBtn.addEventListener("click", () => {
+      state.playbackRate = state.playbackRate === 1.0 ? 0.75 : 1.0;
+      el.speedLabel.textContent = state.playbackRate === 0.75 ? "0.75x (నెమ్మది)" : "1.0x";
+      if (state.currentAudio) state.currentAudio.playbackRate = state.playbackRate;
+      showStatus(
+        state.playbackRate === 0.75
+          ? "ఆడియో వేగం 0.75x (నెమ్మదిగా) కు మార్చబడింది."
+          : "ఆడియో వేగం 1.0x (సాధారణం) కు మార్చబడింది.",
+        "info"
+      );
+    });
+
+    document.getElementById("quickChips").addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip-btn");
+      if (!btn) return;
+      const phrase = btn.getAttribute("data-phrase");
+      el.teluguInput.value = phrase;
+      updateClearButtonVisibility();
+      translateTeluguPhrase(phrase);
+    });
+
+    el.listenMarathiBtn.addEventListener("click", () => {
+      speakPhrase(state.currentTranslation.marathiNative, "mr-IN", "listenMarathiBtn", el.listenMarathiLabel);
+    });
+
+    el.listenHindiBtn.addEventListener("click", () => {
+      speakPhrase(state.currentTranslation.hindiNative, "hi-IN", "listenHindiBtn", el.listenHindiLabel);
+    });
+
+    el.copyMarathiBtn.addEventListener("click", () => {
+      copyToClipboard(`${state.currentTranslation.marathiTelugu} (${state.currentTranslation.marathiNative})`, el.copyMarathiBtn);
+    });
+
+    el.copyHindiBtn.addEventListener("click", () => {
+      copyToClipboard(`${state.currentTranslation.hindiTelugu} (${state.currentTranslation.hindiNative})`, el.copyHindiBtn);
+    });
+
+    el.phrasebookList.addEventListener("click", (e) => {
+      const playMr = e.target.closest("[data-play-mr]");
+      if (playMr) {
+        const item = state.phrasebook[Number(playMr.getAttribute("data-play-mr"))];
+        if (item) speakPhrase(item.marathiNative, "mr-IN", `pb_mr_${item.telugu}`, null);
+        return;
+      }
+
+      const playHi = e.target.closest("[data-play-hi]");
+      if (playHi) {
+        const item = state.phrasebook[Number(playHi.getAttribute("data-play-hi"))];
+        if (item) speakPhrase(item.hindiNative, "hi-IN", `pb_hi_${item.telugu}`, null);
+        return;
+      }
+
+      const delBtn = e.target.closest("[data-del-idx]");
+      if (delBtn) {
+        const idx = Number(delBtn.getAttribute("data-del-idx"));
+        state.phrasebook.splice(idx, 1);
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.phrasebook)); } catch (err) {}
+        renderPhrasebook();
+        return;
+      }
+
+      const loadCard = e.target.closest("[data-load-idx]");
+      if (loadCard) {
+        const item = state.phrasebook[Number(loadCard.getAttribute("data-load-idx"))];
+        if (item) {
+          el.teluguInput.value = item.telugu;
+          updateClearButtonVisibility();
+          applyTranslationResult(item.telugu, item);
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }
+    });
+
+    el.clearHistoryBtn.addEventListener("click", () => {
+      state.phrasebook = [];
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      renderPhrasebook();
+      showStatus("మీ వ్యక్తిగత వాక్యాల చరిత్ర క్లియర్ చేయబడింది.", "info");
+    });
+
+    // Settings Modal Handlers
+    el.settingsBtn.addEventListener("click", () => {
+      el.apiKeyInput.value = getUserApiKey();
+      el.settingsModal.classList.remove("hidden");
+    });
+
+    [el.closeSettingsBtn, el.cancelSettingsBtn].forEach(btn => {
+      btn.addEventListener("click", () => el.settingsModal.classList.add("hidden"));
+    });
+
+    el.saveApiKeyBtn.addEventListener("click", () => {
+      const val = el.apiKeyInput.value.trim();
+      try {
+        if (val) localStorage.setItem(API_KEY_STORAGE, val);
+        else localStorage.removeItem(API_KEY_STORAGE);
+      } catch (e) {}
+      updateApiKeyIndicator();
+      el.settingsModal.classList.add("hidden");
+      showStatus(val ? "మీ Gemini API Key మీ పరికరంలో సురక్షితంగా సేవ్ చేయబడింది ✓" : "API Key తొలగించబడింది.", "success");
+    });
+
+    el.removeApiKeyBtn.addEventListener("click", () => {
+      el.apiKeyInput.value = "";
+      try { localStorage.removeItem(API_KEY_STORAGE); } catch (e) {}
+      updateApiKeyIndicator();
+      el.settingsModal.classList.add("hidden");
+      showStatus("మీ API Key ఈ పరికరం నుండి తొలగించబడింది.", "info");
+    });
+
+    // Diagnostics Modal
+    el.diagBtn.addEventListener("click", () => {
+      el.diagModal.classList.remove("hidden");
+
+      document.getElementById("diagHttpsStatus").textContent =
+        window.isSecureContext ? "✅ సురక్షితం (Secure)" : "❌ అసురక్షితం (HTTP/File)";
+
+      const hasSpeech = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+      const hasMedia = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+      document.getElementById("diagMicStatus").textContent =
+        hasSpeech ? "✅ సిద్ధం (Speech API)" : hasMedia ? "✅ సిద్ధం (MediaRecorder)" : "❌ సపోర్ట్ లేదు";
+
+      const audioOk = unlockAudioContext();
+      document.getElementById("diagAudioStatus").textContent =
+        audioOk ? "✅ సిద్ధం (AudioContext OK)" : "⚠️ పరిమితం";
+
+      let storageOk = false;
+      try {
+        localStorage.setItem("__test__", "1");
+        localStorage.removeItem("__test__");
+        storageOk = true;
+      } catch (e) {}
+      document.getElementById("diagStorageStatus").textContent =
+        storageOk ? "✅ సిద్ధం (ప్రైవేట్)" : "⚠️ సెషన్ మాత్రమే";
+    });
+
+    [el.closeDiagBtn, el.closeDiagFooterBtn].forEach(btn => {
+      btn.addEventListener("click", () => el.diagModal.classList.add("hidden"));
+    });
+
+    el.testBeepBtn.addEventListener("click", () => {
+      unlockAudioContext();
+      if (state.audioCtx) {
+        const osc = state.audioCtx.createOscillator();
+        const gain = state.audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(523.25, state.audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, state.audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, state.audioCtx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(state.audioCtx.destination);
+        osc.start();
+        osc.stop(state.audioCtx.currentTime + 0.4);
+      }
+    });
+
+    // Init
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
+    updateApiKeyIndicator();
+    loadPhrasebook();
+  </script>
+</body>
+</html>
