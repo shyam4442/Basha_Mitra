@@ -58,22 +58,19 @@
       </div>
 
       <div class="flex items-center gap-1.5 sm:gap-2">
-        <!-- Speed Control -->
         <button id="speedBtn" type="button" title="ఆడియో వేగం మార్చండి"
           class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border border-white/25">
           <span>⚡</span>
           <span id="speedLabel">1.0x</span>
         </button>
 
-        <!-- Per-User API Key Settings -->
-        <button id="settingsBtn" type="button" title="మీ వ్యక్తిగత Gemini API కీ సెట్టింగ్"
+        <button id="settingsBtn" type="button" title="ఐచ్ఛిక Gemini API కీ సెట్టింగ్"
           class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border border-white/25">
           <span>⚙️</span>
-          <span id="apiKeyStatusDot" class="w-2 h-2 rounded-full bg-amber-300"></span>
+          <span id="apiKeyStatusDot" class="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span class="hidden sm:inline">API కీ</span>
         </button>
 
-        <!-- Diagnostics Button -->
         <button id="diagBtn" type="button" title="బటన్లు & పర్మిషన్లు పరీక్షించండి"
           class="bg-white/15 hover:bg-white/25 active:scale-95 transition px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 border border-white/25">
           <span>🔧</span>
@@ -93,8 +90,8 @@
           <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
           మీరు తెలుగులో ఏం చెప్పాలనుకుంటున్నారు?
         </label>
-        <span id="micModeBadge" class="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-          వాయిస్ & టెక్స్ట్ సిద్ధం
+        <span id="engineModeBadge" class="text-[11px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">
+          తక్షణ అనువాదం సిద్ధం
         </span>
       </div>
 
@@ -185,7 +182,6 @@
               </button>
             </div>
 
-            <!-- Telugu Transliteration (Primary) -->
             <div class="bg-orange-50/70 rounded-xl p-3.5 border border-orange-100 mb-2.5">
               <p class="text-[11px] font-semibold text-orange-600 mb-1">తెలుగులో చదవండి (ఉచ్చారణ):</p>
               <p id="marathiTeluguScript" class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
@@ -193,7 +189,6 @@
               </p>
             </div>
 
-            <!-- Native Devanagari + Roman -->
             <div class="px-1 space-y-0.5">
               <p id="marathiNative" class="devanagari text-sm text-slate-600 font-medium">इथे थांबा, किती झाले?</p>
               <p id="marathiRoman" class="text-xs text-slate-400 italic">Ithe thaamba, kiti jhale?</p>
@@ -222,7 +217,6 @@
               </button>
             </div>
 
-            <!-- Telugu Transliteration (Primary) -->
             <div class="bg-emerald-50/70 rounded-xl p-3.5 border border-emerald-100 mb-2.5">
               <p class="text-[11px] font-semibold text-emerald-600 mb-1">తెలుగులో చదవండి (ఉచ్చారణ):</p>
               <p id="hindiTeluguScript" class="text-xl sm:text-2xl font-bold text-slate-900 leading-snug">
@@ -230,7 +224,6 @@
               </p>
             </div>
 
-            <!-- Native Devanagari + Roman -->
             <div class="px-1 space-y-0.5">
               <p id="hindiNative" class="devanagari text-sm text-slate-600 font-medium">यहाँ रोकिए, कितना हुआ?</p>
               <p id="hindiRoman" class="text-xs text-slate-400 italic">Yahaan rokiye, kitna hua?</p>
@@ -272,9 +265,7 @@
       </div>
       <p class="text-[11px] text-slate-400 mb-3">ఈ చరిత్ర మీ ఫోన్/బ్రౌజర్‌లో మాత్రమే సురక్షితంగా సేవ్ అవుతుంది (ఇతరులకు కనిపించదు).</p>
 
-      <div id="phrasebookList" class="space-y-2.5">
-        <!-- Populated dynamically -->
-      </div>
+      <div id="phrasebookList" class="space-y-2.5"></div>
     </section>
 
   </main>
@@ -284,14 +275,13 @@
     <div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
         <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-          <span>⚙️</span> మీ వ్యక్తిగత Gemini API కీ
+          <span>⚙️</span> Gemini API కీ (ఐచ్ఛికం / Optional)
         </h3>
         <button id="closeSettingsBtn" type="button" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 font-bold">✕</button>
       </div>
 
       <div class="space-y-2 text-xs text-slate-600 leading-relaxed">
-        <p>ప్రతి వినియోగదారుడు తమ సొంత ఉచిత <strong>Google AI Studio (Gemini) API Key</strong> ని ఇక్కడ సేవ్ చేసుకోవచ్చు. ఇది మీ పరికరంలో మాత్రమే నిల్వ ఉంటుంది—ఎవరితోనూ షేర్ అవ్వదు.</p>
-        <p class="text-slate-500">కీ లేకపోయినా పైన ఉన్న ఉదాహరణ వాక్యాలు మరియు బ్రౌజర్ వాయిస్/ఆడియో పనిచేస్తాయి.</p>
+        <p>API Key లేకపోయినా యాప్ నేరుగా అనువదిస్తుంది. మరింత సహజమైన ముంబై సంభాషణ శైలి మరియు AI వాయిస్ కోసం మీ సొంత ఉచిత <strong>Gemini API Key</strong> ని ఇక్కడ సేవ్ చేసుకోవచ్చు (మీ ఫోన్‌లో మాత్రమే నిల్వ ఉంటుంది).</p>
       </div>
 
       <div>
@@ -363,7 +353,7 @@
 
   <script>
     // =========================================================================
-    // 1. CONFIGURATION & PER-USER LOCAL STATE
+    // 1. CONFIGURATION & LOCAL STATE
     // =========================================================================
     const TEXT_MODEL = "gemini-2.5-flash";
     const TTS_MODEL = "gemini-2.5-flash-preview-tts";
@@ -419,7 +409,7 @@
         hindiTelugu: "ఇస్కీ కీమత్ కిత్నీ హై? థోడా కమ్ కీజియే.",
         hindiNative: "इसकी कीमत कितनी है? थोड़ा कम कीजिए।",
         hindiRoman: "Iski keemat kitni hai? Thoda kam kijiye.",
-        tip: "షాపింగ్ లేదా గార్మెంట్ మార్కెట్లలో బేరం ఆడేటప్పుడు 'థోడం కమీ కరా' చాలా సహజంగా వినిపిస్తుంది."
+        tip: "షాపింగ్ లేదా మార్కెట్లలో బేరం ఆడేటప్పుడు 'థోడం కమీ కరా' చాలా సహజంగా వినిపిస్తుంది."
       },
       "నేను అంధేరీ స్టేషన్‌కు వెళ్ళాలి.": {
         marathiTelugu: "మలా అంధేరీ స్టేషన్‌లా జాయచం ఆహే.",
@@ -451,7 +441,95 @@
     };
 
     // =========================================================================
-    // 2. DOM ELEMENTS
+    // 2. DEVANAGARI -> TELUGU SCRIPT & ROMAN TRANSLITERATION ENGINE
+    // (Enables 100% instant zero-key translations for any custom sentence)
+    // =========================================================================
+    function devanagariToTeluguAndRoman(devText) {
+      const vowelsInd = {
+        'अ': ['అ', 'a'], 'आ': ['ఆ', 'aa'], 'इ': ['ఇ', 'i'], 'ई': ['ఈ', 'ee'],
+        'उ': ['ఉ', 'u'], 'ऊ': ['ఊ', 'oo'], 'ऋ': ['ఋ', 'ri'], 'ए': ['ఏ', 'e'],
+        'ऐ': ['ఐ', 'ai'], 'ओ': ['ఓ', 'o'], 'औ': ['ఔ', 'au'], 'अं': ['అం', 'am'],
+        'अः': ['అః', 'ah'], 'ऑ': ['ఆ', 'o'], 'ॲ': ['అ', 'a']
+      };
+      const consonants = {
+        'क': ['క', 'k'], 'ख': ['ఖ', 'kh'], 'ग': ['గ', 'g'], 'घ': ['ఘ', 'gh'], 'ङ': ['ఙ', 'ng'],
+        'च': ['చ', 'ch'], 'छ': ['ఛ', 'chh'], 'ज': ['జ', 'j'], 'झ': ['ఝ', 'jh'], 'ञ': ['ఞ', 'ny'],
+        'ट': ['ట', 't'], 'ठ': ['ఠ', 'th'], 'ड': ['డ', 'd'], 'ढ': ['ఢ', 'dh'], 'ण': ['ణ', 'n'],
+        'त': ['త', 't'], 'थ': ['థ', 'th'], 'द': ['ద', 'd'], 'ध': ['ధ', 'dh'], 'न': ['న', 'n'],
+        'प': ['ప', 'p'], 'फ': ['ఫ', 'ph'], 'ब': ['బ', 'b'], 'भ': ['భ', 'bh'], 'म': ['మ', 'm'],
+        'य': ['య', 'y'], 'र': ['ర', 'r'], 'ल': ['ల', 'l'], 'व': ['వ', 'v'], 'ळ': ['ళ', 'l'],
+        'श': ['శ', 'sh'], 'ष': ['ష', 'sh'], 'स': ['స', 's'], 'ह': ['హ', 'h'],
+        'क़': ['క', 'q'], 'ख़': ['ఖ', 'kh'], 'ग़': ['గ', 'gh'], 'ज़': ['జ', 'z'],
+        'ड़': ['డ', 'r'], 'ढ़': ['ఢ', 'rh'], 'फ़': ['ఫ', 'f'], 'य़': ['య', 'y']
+      };
+      const matras = {
+        'ा': ['ా', 'aa'], 'ि': ['ి', 'i'], 'ी': ['ీ', 'ee'], 'ु': ['ు', 'u'],
+        'ू': ['ూ', 'oo'], 'ृ': ['ృ', 'ri'], 'े': ['ే', 'e'], 'ै': ['ై', 'ai'],
+        'ो': ['ో', 'o'], 'ौ': ['ౌ', 'au'], 'ॉ': ['ా', 'o'], 'ॅ': ['ె', 'e']
+      };
+
+      let teOut = "";
+      let roOut = "";
+      const chars = Array.from(devText || "");
+
+      for (let i = 0; i < chars.length; i++) {
+        const ch = chars[i];
+        const next = chars[i + 1];
+
+        if (ch === '।') {
+          teOut += ".";
+          roOut += ".";
+          continue;
+        }
+        if (ch === 'ं') {
+          teOut += "ం";
+          roOut += "n";
+          continue;
+        }
+        if (ch === 'ँ') {
+          teOut += "ఁ";
+          roOut += "n";
+          continue;
+        }
+        if (ch === 'ः') {
+          teOut += "ః";
+          roOut += "h";
+          continue;
+        }
+        if (ch === '़') {
+          continue;
+        }
+        if (vowelsInd[ch]) {
+          teOut += vowelsInd[ch][0];
+          roOut += vowelsInd[ch][1];
+          continue;
+        }
+        if (consonants[ch]) {
+          const [teC, roC] = consonants[ch];
+          if (next === '्') {
+            teOut += teC + "్";
+            roOut += roC;
+            i++;
+          } else if (matras[next]) {
+            teOut += teC + matras[next][0];
+            roOut += roC + matras[next][1];
+            i++;
+          } else {
+            teOut += teC;
+            const isWordEnd = !next || /[\s.,?!।]/.test(next);
+            roOut += isWordEnd ? roC : roC + "a";
+          }
+          continue;
+        }
+        teOut += ch;
+        roOut += ch;
+      }
+
+      return { teluguScript: teOut, roman: roOut };
+    }
+
+    // =========================================================================
+    // 3. DOM ELEMENTS
     // =========================================================================
     const el = {
       teluguInput: document.getElementById("teluguInput"),
@@ -459,7 +537,7 @@
       micBtn: document.getElementById("micBtn"),
       micIcon: document.getElementById("micIcon"),
       micBtnLabel: document.getElementById("micBtnLabel"),
-      micModeBadge: document.getElementById("micModeBadge"),
+      engineModeBadge: document.getElementById("engineModeBadge"),
       recordingWave: document.getElementById("recordingWave"),
       translateBtn: document.getElementById("translateBtn"),
       translateBtnText: document.getElementById("translateBtnText"),
@@ -502,11 +580,12 @@
       const hasKey = Boolean(getUserApiKey());
       el.apiKeyStatusDot.className = hasKey
         ? "w-2 h-2 rounded-full bg-emerald-400"
-        : "w-2 h-2 rounded-full bg-amber-300";
+        : "w-2 h-2 rounded-full bg-sky-300";
+      el.engineModeBadge.textContent = hasKey ? "Gemini AI మోడ్ సిద్ధం" : "ఫ్రీ డైరెక్ట్ మోడ్ సిద్ధం";
     }
 
     // =========================================================================
-    // 3. HELPER UTILITIES
+    // 4. HELPER UTILITIES
     // =========================================================================
     function showStatus(message, type = "info") {
       const styles = {
@@ -606,8 +685,82 @@
     }
 
     // =========================================================================
-    // 4. TRANSLATION ENGINE
+    // 5. DUAL-MODE TRANSLATION ENGINE (GEMINI AI + ZERO-KEY FREE FALLBACK)
     // =========================================================================
+    async function fetchFreePublicTranslation(text, targetLang) {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=te&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP_${res.status}`);
+      const data = await res.json();
+      if (!Array.isArray(data?.[0])) throw new Error("PARSE_ERR");
+      return data[0].map(part => part[0]).join("");
+    }
+
+    async function translateWithFreeEngine(cleanText) {
+      const [mrNative, hiNative] = await Promise.all([
+        fetchFreePublicTranslation(cleanText, "mr"),
+        fetchFreePublicTranslation(cleanText, "hi")
+      ]);
+      const mrConv = devanagariToTeluguAndRoman(mrNative);
+      const hiConv = devanagariToTeluguAndRoman(hiNative);
+
+      return {
+        marathiTelugu: mrConv.teluguScript,
+        marathiNative: mrNative,
+        marathiRoman: mrConv.roman,
+        hindiTelugu: hiConv.teluguScript,
+        hindiNative: hiNative,
+        hindiRoman: hiConv.roman,
+        tip: "ఉచ్చారణ వినడానికి క్రింద ఉన్న 🔊 'వినండి' బటన్ నొక్కండి. మరింత సహజమైన సంభాషణ శైలి కోసం '⚙️ API కీ' జతచేయవచ్చు."
+      };
+    }
+
+    async function translateWithGemini(cleanText, userKey) {
+      const prompt = `You are a helpful Telugu-to-Marathi and Hindi language tutor for a Telugu speaker in Mumbai.
+Translate the following Telugu phrase into natural, conversational Marathi and Hindi.
+CRITICAL: Provide accurate transliteration of both the Marathi and Hindi translations written in Telugu script so a Telugu reader can pronounce them accurately.
+
+Telugu Input: "${cleanText}"
+
+Return ONLY valid JSON with this exact schema:
+{
+  "marathiTelugu": "Marathi translation written in Telugu script",
+  "marathiNative": "Marathi translation in Devanagari script",
+  "marathiRoman": "Marathi phonetic English spelling",
+  "hindiTelugu": "Hindi translation written in Telugu script",
+  "hindiNative": "Hindi translation in Devanagari script",
+  "hindiRoman": "Hindi phonetic English spelling",
+  "tip": "Short, practical usage or politeness tip in Telugu (1-2 sentences)"
+}`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${encodeURIComponent(userKey)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              temperature: 0.2
+            }
+          })
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) {
+        const apiMsg = data?.error?.message || `HTTP ${response.status}`;
+        throw new Error(apiMsg);
+      }
+
+      let rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+      rawText = rawText.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
+      if (!rawText) throw new Error("EMPTY_RESPONSE");
+
+      return JSON.parse(rawText);
+    }
+
     async function translateTeluguPhrase(inputText) {
       const cleanText = (inputText || "").trim();
       if (!cleanText) {
@@ -625,69 +778,35 @@
       const userKey = getUserApiKey();
 
       try {
-        if (!userKey) {
-          const matchedKey = Object.keys(OFFLINE_DICTIONARY).find(
-            k => k.replace(/[?.!]/g, "").trim() === cleanText.replace(/[?.!]/g, "").trim()
-          );
-          if (matchedKey) {
-            applyTranslationResult(cleanText, OFFLINE_DICTIONARY[matchedKey]);
-            return;
-          }
-          throw new Error("NO_API_KEY");
-        }
-
-        const prompt = `You are a helpful Telugu-to-Marathi and Hindi language tutor for a Telugu speaker in Mumbai.
-Translate the following Telugu phrase into natural, conversational Marathi and Hindi.
-CRITICAL: Provide accurate transliteration of both the Marathi and Hindi translations written in **Telugu script** so a Telugu reader can pronounce them accurately.
-
-Telugu Input: "${cleanText}"
-
-Return ONLY valid JSON with this exact schema:
-{
-  "marathiTelugu": "Marathi translation written in Telugu script",
-  "marathiNative": "Marathi translation in Devanagari script",
-  "marathiRoman": "Marathi phonetic English spelling",
-  "hindiTelugu": "Hindi translation written in Telugu script",
-  "hindiNative": "Hindi translation in Devanagari script",
-  "hindiRoman": "Hindi phonetic English spelling",
-  "tip": "Short, practical usage or politeness tip in Telugu (1-2 sentences)"
-}`;
-
-        const response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/${TEXT_MODEL}:generateContent?key=${encodeURIComponent(userKey)}`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: prompt }] }],
-              generationConfig: {
-                responseMimeType: "application/json",
-                temperature: 0.2
-              }
-            })
-          }
-        );
-
-        if (!response.ok) throw new Error(`API_ERROR_${response.status}`);
-
-        const data = await response.json();
-        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!rawText) throw new Error("EMPTY_RESPONSE");
-
-        const parsed = JSON.parse(rawText);
-        applyTranslationResult(cleanText, parsed);
-
-      } catch (err) {
+        // 1. Check built-in offline dictionary first
         const matchedKey = Object.keys(OFFLINE_DICTIONARY).find(
           k => k.replace(/[?.!]/g, "").trim() === cleanText.replace(/[?.!]/g, "").trim()
         );
-        if (matchedKey) {
+        if (matchedKey && !userKey) {
           applyTranslationResult(cleanText, OFFLINE_DICTIONARY[matchedKey]);
-        } else if (err.message === "NO_API_KEY") {
-          showStatus("కొత్త వాక్యాల అనువాదం కోసం పైన ఉన్న '⚙️ API కీ' నొక్కి మీ ఉచిత Gemini API Key ని సేవ్ చేయండి.", "warning");
-        } else {
-          showStatus("అనువాదంలో అంతరాయం ఏర్పడింది. మీ API Key సరిగ్గా ఉందో లేదో తనిఖీ చేయండి.", "error");
+          return;
         }
+
+        // 2. If user saved a Gemini API key, try Gemini first; auto-fallback to free engine on error
+        if (userKey) {
+          try {
+            const geminiResult = await translateWithGemini(cleanText, userKey);
+            applyTranslationResult(cleanText, geminiResult);
+            return;
+          } catch (geminiErr) {
+            const fallbackResult = await translateWithFreeEngine(cleanText);
+            applyTranslationResult(cleanText, fallbackResult);
+            showStatus(`Gemini కీ లోపం (${geminiErr.message}) — ఫ్రీ అనువాద ఇంజిన్ ఉపయోగించబడింది.`, "warning");
+            return;
+          }
+        }
+
+        // 3. Default zero-key instant translation for all users
+        const freeResult = await translateWithFreeEngine(cleanText);
+        applyTranslationResult(cleanText, freeResult);
+
+      } catch (err) {
+        showStatus(`అనువాదంలో అంతరాయం ఏర్పడింది (${err.message}). ఇంటర్నెట్ కనెక్షన్ తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.`, "error");
       } finally {
         state.isTranslating = false;
         el.translateBtn.disabled = false;
@@ -721,7 +840,7 @@ Return ONLY valid JSON with this exact schema:
     }
 
     // =========================================================================
-    // 5. DUAL-ENGINE VOICE INPUT
+    // 6. DUAL-ENGINE VOICE INPUT
     // =========================================================================
     function stopRecordingUI() {
       state.isRecording = false;
@@ -739,7 +858,7 @@ Return ONLY valid JSON with this exact schema:
       el.micBtnLabel.textContent = "ఆపండి";
       el.recordingWave.classList.remove("hidden");
       el.recordingWave.classList.add("flex");
-      if (modeText) el.micModeBadge.textContent = modeText;
+      if (modeText) el.engineModeBadge.textContent = modeText;
     }
 
     async function toggleVoiceInput() {
@@ -784,6 +903,7 @@ Return ONLY valid JSON with this exact schema:
 
           recognition.onerror = async (event) => {
             stopRecordingUI();
+            updateApiKeyIndicator();
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
               showStatus("మైక్రోఫోన్ అనుమతి నిరాకరించబడింది. అడ్రస్ బార్ పక్కన ఉన్న 🔒 ఐకాన్ నొక్కి Microphone Allow చేయండి.", "error");
             } else {
@@ -793,6 +913,7 @@ Return ONLY valid JSON with this exact schema:
 
           recognition.onend = () => {
             stopRecordingUI();
+            updateApiKeyIndicator();
             if (el.teluguInput.value.trim()) {
               translateTeluguPhrase(el.teluguInput.value.trim());
             }
@@ -825,13 +946,14 @@ Return ONLY valid JSON with this exact schema:
         mediaRecorder.onstop = async () => {
           stream.getTracks().forEach(t => t.stop());
           stopRecordingUI();
+          updateApiKeyIndicator();
 
           const audioBlob = new Blob(state.audioChunks, { type: mediaRecorder.mimeType || "audio/webm" });
           if (audioBlob.size < 500) return;
 
           const userKey = getUserApiKey();
           if (!userKey) {
-            showStatus("ఆడియోను టెక్స్ట్‌గా మార్చడానికి పైన '⚙️ API కీ' నొక్కి మీ Gemini API Key ని జతచేయండి.", "warning");
+            showStatus("ఈ బ్రౌజర్‌కు లైవ్ స్పీచ్ సపోర్ట్ లేదు. రికార్డింగ్ ట్రాన్స్‌క్రిప్షన్ కోసం '⚙️ API కీ' జతచేయండి లేదా కీబోర్డ్ ద్వారా టైప్ చేయండి.", "warning");
             return;
           }
 
@@ -886,7 +1008,7 @@ Return ONLY valid JSON with this exact schema:
     }
 
     // =========================================================================
-    // 6. AUDIO PLAYBACK ENGINE
+    // 7. AUDIO PLAYBACK ENGINE
     // =========================================================================
     function stopCurrentAudio() {
       if (state.currentAudio) {
@@ -989,7 +1111,7 @@ Return ONLY valid JSON with this exact schema:
     function fallbackBrowserTTS(text, langCode, labelEl) {
       if (!("speechSynthesis" in window)) {
         resetAllListenLabels();
-        showStatus("ఆడియో ప్లేబ్యాక్ కోసం '⚙️ API కీ' నొక్కి మీ Gemini API Key ని జతచేయండి.", "warning");
+        showStatus("ఈ బ్రౌజర్‌లో వాయిస్ సింథసిస్ లేదు. AI ఆడియో కోసం '⚙️ API కీ' వాడండి.", "warning");
         return;
       }
 
@@ -1011,7 +1133,7 @@ Return ONLY valid JSON with this exact schema:
         utterance.onend = () => resetAllListenLabels();
         utterance.onerror = () => {
           resetAllListenLabels();
-          showStatus("ఈ పరికరంలో స్థానిక వాయిస్ ప్యాక్ లేదు. పూర్తి ఆడియో కోసం '⚙️ API కీ' వాడండి.", "warning");
+          showStatus("స్థానిక ఆడియో ప్లే చేయలేకపోయాము. '⚙️ API కీ' ద్వారా AI వాయిస్ ఉపయోగించవచ్చు.", "warning");
         };
 
         window.speechSynthesis.speak(utterance);
@@ -1022,7 +1144,7 @@ Return ONLY valid JSON with this exact schema:
     }
 
     // =========================================================================
-    // 7. PRIVATE PER-USER PHRASEBOOK (LOCALSTORAGE)
+    // 8. PRIVATE PER-USER PHRASEBOOK (LOCALSTORAGE)
     // =========================================================================
     function loadPhrasebook() {
       try {
@@ -1088,7 +1210,7 @@ Return ONLY valid JSON with this exact schema:
     }
 
     // =========================================================================
-    // 8. EVENT LISTENERS & MODALS
+    // 9. EVENT LISTENERS & MODALS
     // =========================================================================
     function updateClearButtonVisibility() {
       if (el.teluguInput.value.trim().length > 0) el.clearBtn.classList.remove("hidden");
